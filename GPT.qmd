@@ -8,6 +8,8 @@ library("readtext") #pacote para ler o texto
 
 Primeiro temos que importar nossos dados
 
+https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing#scrollTo=O6medjfRsLD9
+
 ```{r}
 text <- readtext("input.txt") 
 
@@ -17,8 +19,9 @@ nchar(text$text) # numero de caracteres no texto
 
 chars <- sort(unique(strsplit(text$text, "")[[1]])) # nosso vocabulario
 print(chars)
+print(substr(text$text, 1 ,1000)) # pri
 
-
+# 
 
 ```
 
