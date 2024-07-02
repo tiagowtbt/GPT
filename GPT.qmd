@@ -1,0 +1,24 @@
+---
+title: "GPT"
+---
+
+```{r}
+library("readtext") #pacote para ler o texto
+```
+
+Primeiro temos que importar nossos dados
+
+```{r}
+text <- readtext("input.txt") 
+
+nchar(text$text) # numero de caracteres no texto
+
+#print(text$text)
+
+chars <- sort(unique(strsplit(text$text, "")[[1]])) # nosso vocabulario
+print(chars)
+
+
+
+```
+
