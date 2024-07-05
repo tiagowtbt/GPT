@@ -4,6 +4,9 @@ title: "GPT"
 
 ```{r}
 library("readtext") #pacote para ler o texto
+library("stringr")
+library(torch)
+library(tidyverse)
 ```
 
 Primeiro temos que importar nossos dados
@@ -11,29 +14,69 @@ Primeiro temos que importar nossos dados
 https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing#scrollTo=O6medjfRsLD9
 
 ```{r}
-text <- readtext("input.txt") 
+import <- readtext("input.txt") 
 
-text$text <- enc2utf8(text$text)
-nchar(text$text) # numero de caracteres no texto
+text <- enc2utf8(import$text)
+nchar(text) # numero de caracteres no texto
 
 #cat(text$text, "\n", sep = "")
 
-chars <- sort(unique(strsplit(text$text, "")[[1]])) # nosso vocabulario
+vocab <- sort(unique(strsplit(text, "")[[1]])) # nosso vocabulario
 
-cat(chars)
-#cat(substr(text$text, 1 ,1000), "\n", sep = "") # pri
-
+cat(vocab)
+#cat(substr(text, 1 ,1000), "\n", sep = "") # pri
+rm(import)
 ```
 
 ```{r}
 # criando os codificadores e decodificadores
 
-stoi <- order(chars)
+index <- 1:length(vocab)
+df <- data.frame(index, vocab)
 
-my_function <- encode() { 
+encode <- function(char) {
+  aux_1 <- as.vector(str_split_fixed(char, pattern = "", n = nchar(char)))
+  aux_2 <- c()
   
-  
+  for (i in 1:length(aux_1)) {
+    aux_2[length(aux_2) + 1] <- df$index[df$vocab == nth(aux_1, i)]
+    
+    
+  }
+  return(aux_2)
 }
+
+decode <- function(data) {
+  
+  aux_2 <- c()
+  for (i in 1:length(data)) {
+    aux_2[length(aux_2) + 1] <- df$vocab[df$index == as.integer(data[i])]
+  }
+  
+  aux_2 <- paste(aux_2, collapse = " ")
+  return(aux_2)
+}
+
+print(encode(substr(text, 1 ,1000)))
+
+```
+
+```{r}
+data <- torch_tensor(encode(text), dtype = torch_long())
+
+print(decode(data[1:1000]))
+
+```
+
+```{r}
+n <- as.integer(0.9*(length(data)))
+
+train_data <- data[1:n]
+val_data <- data[n:length(data)]
+
+block_size <- 8
+
+
 
 ```
 
