@@ -9,9 +9,11 @@ library(torch)
 library(tidyverse)
 ```
 
+
 Primeiro temos que importar nossos dados
 
 https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing#scrollTo=O6medjfRsLD9
+
 
 ```{r}
 import <- readtext("input.txt") 
@@ -22,8 +24,6 @@ nchar(text) # numero de caracteres no texto
 #cat(text$text, "\n", sep = "")
 
 vocab <- sort(unique(strsplit(text, "")[[1]])) # nosso vocabulario
-
-vocab_size <- length(vocab)
 
 cat(vocab)
 #cat(substr(text, 1 ,1000), "\n", sep = "") # pri
@@ -87,97 +87,29 @@ batch_size <- 4
 
 get_batch <- function(split) {
   if (split == "train") {
-    data <- train_data
+    
   }
   else data <- val_data
   
-  ix <- torch_randint(0, length(data) - block_size, batch_size)
+  ix <- torch_rand_int(0, length(data) - block_size, batch_size)
+  for(i in ix:(ix + block_size)) {
+    data[]
+  }
+  
+  
+  
+}
+
+x <- matrix()
+
+data <- train_data
+ix <- torch_randint(0, length(data) - block_size, batch_size)
   for(i in 1: batch_size) {
-    aux_1 <- as.array(data[as.numeric(ix[i]):(as.numeric(ix[i]) + block_size - 1)])
-    aux_2 <- as.array(data[(as.numeric(ix[i]) + 1):(as.numeric(ix[i]) + block_size)])
-    if(i == 1) {
-      x <- aux_1
-      y <- aux_2
-    }
-    else {
-      x <- rbind(x, aux_1)
-      y <- rbind(y, aux_2)
-    }
+    aux <- as.array(data[as.numeric(ix[1]):(as.numeric(ix[1]) + block_size - 1)])
+    x <- rbind(x,aux)
   }
   
-  x <- torch_tensor(x)
-  y <- torch_tensor(y)
-  out <- list(x = x, y = y)
-}
-
-```
-
-```{r}
-
-out <- get_batch("train")
-
-xb = out$x
-yb = out$y
-
-for(b in 1:batch_size) {
-  for(t in 1:block_size){
-    context <- as.numeric(xb[b, 1:t])
-    target <- as.numeric(yb[b,t])
-    print(paste0(c("When input is: [", context, "] target is: [", target, "]"),collapse = " "))
-  }
-  
-}
-
-```
-
-```{r}
 
 
 ```
 
-```{r}
-
-
-
-token_embeding_table = nn_embedding(vocab_size, vocab_size)
-
-
-
-
-foward <- function(idx, targets) {
-  
-  logits = token_embeding_table(idx)
-
-  if (targets == 0) {
-    loss = 0
-  }
-  
-  B <- as.numeric(logits$shape[1])
-  T <- as.numeric(logits$shape[2])
-  C <- as.numeric(logits$shape[3])
-  
-  logits <- logits$view(B*T, C)
-  targets <- targets$view(B*T)
-  loss <- nnf_cross_entropy(logits, targets)
-
-  out <- list(logits = logits, targets = targets)
-  return(out)
-}
-
-generate <- function(idx, max_new_tokens) {
-  for (i in 1:max_new_tokens){
-    
-    probs <- nnf_softmax(logits, dim = -1)
-    idx_next = torch_multinomial(probs, num_samples = 1)
-    idx <- torch_cat(idx, idx_next, dim = 1)
-  }
-  
-  return(idx)
-  
-  
-}
-```
-
-```{r}
-optimizer <- optim_adamw()
-```
